@@ -15,7 +15,7 @@ class Controler(Node):
       self.pub = self.create_publisher(Twist, "/cmd_vel", 1)
       self.sub= self.create_subscription(Pose,"/pose",self.callback_turtle_pose,1)
       self.ack = self.create_publisher(Bool,"acknowledged",1)
-      self.strl = self.create_subscription(Float32,"/streetlight",self.callback_light,1)
+      self.strl = self.create_subscription(Float32,"/states",self.callback_light,1)
       self.envelope = 0.0
       self.speed = 0.0
       
@@ -39,7 +39,7 @@ class Controler(Node):
       self.accTime = 0.5
       
       #Diferentes trayectorias
-      self.lista = [(0,1),(1,1),(1,0),(0,0)] #Cuadrado
+      self.lista = [(0,1.5),(1.5,1.5),(1.5,0),(0,0)] #Cuadrado
       #self.lista = [(0,1),(1,1),(0,0)] # Triangulo
       #self.lista = [(0.5,0.5),(0,1),(-0.5,0.5),(0,0)] # Rombo
       #self.lista = [(1.5,0),(0,1),(-1.5,0.0),(-1,-2),(1,-2),(1.5,0)] # Pentagono
@@ -49,7 +49,7 @@ class Controler(Node):
       self.pose = msg
    
    def callback_light(self,msg):
-      self.speed = msg.data 
+      self.speed = msg.data   
 
       
    # Función go to point simple
@@ -201,13 +201,6 @@ class Controler(Node):
      time.sleep(2)
      for coo in self.lista:
         self.angleandpursuit(coo[0],coo[1])
-
-
-     
-
-
-     
-     
      
       
 def main(args=None):
