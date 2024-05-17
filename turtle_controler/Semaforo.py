@@ -77,7 +77,7 @@ class OpenCVBridge(Node):
                self.color = "No Light Detected!!!"
 
            cv2.imshow("Puzzlebot", self.vid)
-           self.get_logger().info(self.color)
+           #self.get_logger().info(self.color)
            cv2.waitKey(1)
            
 def main(args=None):
@@ -85,7 +85,7 @@ def main(args=None):
    nodeh = OpenCVBridge()
    try: rclpy.spin(nodeh)
    except Exception as error: print(error) 
-   except KeyboardInterrupt: print("Node DEAD AF!!!")
+   except KeyboardInterrupt: print("Node killed unu")
 
 
 if __name__ == "__main__":

@@ -19,8 +19,6 @@ class Controler(Node):
       self.envelope = 0.0
       self.speed = 0.0
       
-      
-
       self.pose = None
       rclpy.spin_once(self)
       #Valores de constantes proporcionales
@@ -93,7 +91,7 @@ class Controler(Node):
                self.pub.publish(Twist())
                print("Target reached")
                break
-            print(a_ang)
+            #print(a_ang)
             #Envía velocidad a robot
 
             #control de velocidad
@@ -164,10 +162,10 @@ class Controler(Node):
             msg.linear.x = max(min(self.Kv * e_dist,self.linMax),-self.linMax)*self.envelope
             msg.angular.z = max(min(self.Ka * a_ang,self.angMax),-self.angMax)* self. envelope
 
-            print("L: " + str(e_dist))
-            print("A: "+ str(a_ang))
-            print("---------------------")
-            print("V: " + str(msg.linear.x))
+            #print("L: " + str(e_dist))
+            #print("A: "+ str(a_ang))
+            #print("---------------------")
+            #print("V: " + str(msg.linear.x))
             self.pub.publish(msg)
             rclpy.spin_once(self) #Checa los mensajes
             time.sleep(0.02)
@@ -178,8 +176,8 @@ class Controler(Node):
       msg = Twist()
       self.pub.publish(msg)
       time.sleep(2)
-      print("Target: x: " + str(target_x) + " y: " + str(target_y) )
-      print("yes")
+      #print("Target: x: " + str(target_x) + " y: " + str(target_y) )
+      #print("yes")
       actual_x = self.pose.x
       actual_y = self.pose.y
 
@@ -191,16 +189,19 @@ class Controler(Node):
       self.go_to_angle(angle)
       time.sleep(2)
       self.acc_go_to_point(target_x,target_y)
-      print("Target Reached")
+      #print("Target Reached")
       time.sleep(2)
 
 
     
-   def principal(self):
-     print("begin...")
-     time.sleep(2)
-     for coo in self.lista:
-        self.angleandpursuit(coo[0],coo[1])
+
+      
+      print("begin...")
+      time.sleep(4)
+      for coo in self.lista:
+         self.angleandpursuit(coo[0],coo[1])
+      self.get_logger().info("Finished")
+
      
       
 def main(args=None):
