@@ -1,3 +1,7 @@
+import os
+from glob import glob
+
+
 from setuptools import find_packages, setup
 
 package_name = 'turtle_controler'
@@ -10,6 +14,11 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        
+        
+        (os.path.join('share',package_name),glob('launch/*launch.[pxy][yam]*')),
+        (os.path.join('share',package_name),glob('launch/*.[pxy][yam]*')),
+        (os.path.join('share',package_name, 'config'),glob('config/*.yaml')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -28,6 +37,7 @@ setup(
         "PuzzleCL = turtle_controler.PuzzleCL:main",
         "Semaforo = turtle_controler.Semaforo:main",
         "Linea = turtle_controler.Linea:main",
+        "PuzzleSM = turtle_controler.PuzzleSM:main"
         ],
     },
 )
