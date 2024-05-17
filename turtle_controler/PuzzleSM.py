@@ -5,6 +5,7 @@ from geometry_msgs.msg import Twist
 from turtlesim.msg import Pose
 from std_msgs.msg import Float32, Bool, String
 
+#HOLIIIICANOLIIII
 
 class SM(Node):
    def __init__(self):

@@ -36,6 +36,7 @@ setup(
         "odometry = turtle_controler.odometry:main",
         "PuzzleCL = turtle_controler.PuzzleCL:main",
         "Semaforo = turtle_controler.Semaforo:main",
+        "Linea = turtle_controler.Linea:main",
         "PuzzleSM = turtle_controler.PuzzleSM:main"
         ],
     },
