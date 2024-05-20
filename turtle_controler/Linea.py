@@ -23,7 +23,7 @@ class LineDetect(Node):
        self.line = "N/A"
    
    def camera_callback(self,msg):
-       self.vid = self.bridge.imgmsg_to_cv2(msg, "bgr8") #bgr8
+       self.vid = self.bridge.imgmsg_to_cv2(msg, "bgr8") #bgr80
 
    def timer_callback(self):
        msg = Int32()
@@ -33,7 +33,8 @@ class LineDetect(Node):
            roi = self.gray_img[(self.height)*2//3:, :]
            blurred = cv2.GaussianBlur(roi, (5, 5), 0)
            edges = cv2.Canny(blurred,50,150,apertureSize=3)
-           lines = cv2.HoughLinesP(edges,1,np.pi/180,50,minLineLength=40,maxLineGap=10)
+           mask = cv2.bitwise_not(edges)
+           lines = cv2.HoughLinesP(mask, 1, np.pi/180, 50, minLineLength=40, maxLineGap=10)
            
            #centro del roi
            cx = self.width // 2
@@ -56,13 +57,13 @@ class LineDetect(Node):
                     if abs(temp_error) < abs(error):
                         error = temp_error
 
-                    cv2.line(self.gray_img, (x1, y1 + (self.height*2)//3), (x2, y2 + (self.height*2)//3), (0, 255, 0), 2)
+                    cv2.line(mask, (x1, y1), (x2, y2), (0, 0, 0), 2)
 
                     msg.data = int(error)
                     
            self.pub.publish(msg)
            self.get_logger().info(f"Error mínimo: {error} píxeles")
-           cv2.imshow("Puzzlebot", self.gray_img)
+           cv2.imshow("Puzzlebot", mask)
            cv2.waitKey(1)
            
 def main(args=None):
