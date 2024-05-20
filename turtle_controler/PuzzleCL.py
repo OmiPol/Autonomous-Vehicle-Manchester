@@ -19,7 +19,7 @@ class Controler(Node):
       self.envelope = 0.0
       self.speed = 0.0
       
-      self.pose = None
+      self.pose = Pose()
       rclpy.spin_once(self)
       #Valores de constantes proporcionales
       self.Kv = 0.2
@@ -195,7 +195,7 @@ class Controler(Node):
 
     
 
-      
+   def principal(self):
       print("begin...")
       time.sleep(4)
       for coo in self.lista:

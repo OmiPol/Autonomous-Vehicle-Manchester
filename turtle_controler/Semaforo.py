@@ -19,6 +19,7 @@ class OpenCVBridge(Node):
        self.width, self.height = 320,180
        self.color_img = np.uint16((self.width, self.height, 3))
        self.gray_img = np.uint16((self.width, self.height))
+       self.hsv_img = np.uint16((self.width, self.height))
        self.edges_img = np.uint16((self.width, self.height))
        self.color = "N/A"
    
@@ -29,53 +30,51 @@ class OpenCVBridge(Node):
        msg = String()
        if self.vid is not None:
            self.gray_img = cv2.cvtColor(self.vid, cv2.COLOR_BGR2GRAY)
-           rows = self.gray_img.shape[0]
-           circles = cv2.HoughCircles(self.gray_img,cv2.HOUGH_GRADIENT, dp=1, minDist=rows/8, param1=90, param2=65, minRadius=10, maxRadius=70)
-           if circles is not None:
-               circles = np.uint16(np.around(circles))
-               radius_centre = 1
-               thickness_centre = 2
-               thickness_outline = 2
-               for i in circles[0, :]:
-                   hsv_frame = cv2.cvtColor(self.vid, cv2.COLOR_BGR2HSV)
-                   cx = int(self.width / 2)
-                   cy = int(self.height / 2)
-                   pixel_center = hsv_frame[cy,cx]
-                   hue_value = pixel_center[0]
-
-                   center = (i[0], i[1])
-                   cv2.circle(self.vid, center, radius_centre,(255,255,255),thickness_centre)
-                   radius_outline = i[2]
-                   cv2.circle(self.vid, center, radius_outline, (255,255,255),thickness_outline)
-                   if (hue_value >= 0 and hue_value < 12) or (hue_value >= 165 and hue_value < 181):
-                       self.color = "RED"
-                       msg.data = 'r'
-                       self.pub.publish(msg)
-
-                   elif (hue_value >= 12 and hue_value < 30):
-                       self.color = "YELLOW"
-                       msg.data = 'y'
-                       self.pub.publish(msg)
-                   
-                   elif (hue_value >= 75 and hue_value < 100):
-                       self.color = "GREEN"
-                       msg.data = 'g'
-                       self.pub.publish(msg)
-
-                   elif ((hue_value >= 0 and hue_value < 12) or (hue_value >= 165 and hue_value < 181))and (hue_value >= 75 and hue_value < 100):
+           self.hsv_img = cv2.cvtColor(self.vid, cv2.COLOR_BGR2HSV)
+           params = cv2.SimpleBlobDetector_Params()
+           #area
+           params.filterByArea = True;
+           params.minArea = 500;
+           params.maxArea = 3000;
+           #inertia
+           params.filterByInertia = True;
+           params.minInertiaRatio = 0.005;
+           detector = cv2.SimpleBlobDetector_create(params)
+           keypoints = detector.detect(self.gray_img)
+           if keypoints is not None:
+               for kp in keypoints:
+                    x = int(kp.pt[0]);
+                    y = int(kp.pt[1]);
+                    pixel_center = self.hsv_img[y,x]
+                    hue_value = pixel_center[0]  
+                    if (hue_value >= 0 and hue_value < 12) or (hue_value >= 165 and hue_value < 181):
                        self.color = "RED"
                        msg.data = 'r'
                        self.pub.publish(msg)
                     
-                   elif ((hue_value >= 0 and hue_value < 12) or (hue_value >= 165 and hue_value < 181))and (hue_value >= 12 and hue_value < 30):
+                    elif (hue_value >= 12 and hue_value < 30):
+                       self.color = "YELLOW"
+                       msg.data = 'y'
+                       self.pub.publish(msg)
+                    
+                    elif (hue_value >= 75 and hue_value < 100):
+                       self.color = "GREEN"
+                       msg.data = 'g'
+                       self.pub.publish(msg)
+                    
+                    elif ((hue_value >= 0 and hue_value < 12) or (hue_value >= 165 and hue_value < 181))and (hue_value >= 75 and hue_value < 100):
                        self.color = "RED"
                        msg.data = 'r'
                        self.pub.publish(msg)
-
-
+                    
+                    elif ((hue_value >= 0 and hue_value < 12) or (hue_value >= 165 and hue_value < 181))and (hue_value >= 12 and hue_value < 30):
+                       self.color = "RED"
+                       msg.data = 'r'
+                       self.pub.publish(msg)
            else:
                self.color = "No Light Detected!!!"
 
+           self.im_with_keypoints = cv2.drawKeypoints(self.vid, keypoints,np.array([]), (255,255,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
            cv2.imshow("Puzzlebot", self.vid)
            #self.get_logger().info(self.color)
            cv2.waitKey(1)
