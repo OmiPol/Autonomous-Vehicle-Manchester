@@ -23,7 +23,7 @@ class LineDetect(Node):
        self.line = "N/A"
    
    def camera_callback(self,msg):
-       self.vid = self.bridge.imgmsg_to_cv2(msg, "bgr8") #bgr80
+       self.vid = self.bridge.imgmsg_to_cv2(msg, "bgr8") #bgr8
 
    def timer_callback(self):
        msg = Int32()
@@ -32,35 +32,35 @@ class LineDetect(Node):
            self.gray_img = cv2.cvtColor(self.vid, cv2.COLOR_BGR2GRAY)
            roi = self.gray_img[(self.height)*2//3:, :]
            blurred = cv2.GaussianBlur(roi, (5, 5), 0)
-           edges = cv2.Canny(blurred,50,150,apertureSize=3)
-           mask = cv2.bitwise_not(edges)
-           lines = cv2.HoughLinesP(mask, 1, np.pi/180, 50, minLineLength=40, maxLineGap=10)
-           
+           _, mask = cv2.threshold(blurred, 60, 255, cv2.THRESH_BINARY_INV) # threshold for black color
+
            #centro del roi
            cx = self.width // 2
            cy = self.height // 3
 
            error = 69420
 
-           if lines is not None:
-                for line in lines:
-                    x1, y1, x2, y2 = line[0]
-                    
-                    #centro de linea
-                    mx = (x1 + x2) // 2
-                    my = (y1 + y2) // 2
+           # find contours of the mask
+           contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+           for contour in contours:
+               # get centroid of the contour
+               M = cv2.moments(contour)
+               if M["m00"] != 0:
+                   cX = int(M["m10"] / M["m00"])
+                   cY = int(M["m01"] / M["m00"])
+               else:
+                   cX, cY = 0, 0
 
-                    #calculo de error
-                    temp_error = mx - cx
+               # calculate error
+               temp_error = cX - cx
 
-                    #actualizacion del minimo    
-                    if abs(temp_error) < abs(error):
-                        error = temp_error
+               # update minimum error
+               if abs(temp_error) < abs(error):
+                   error = temp_error
 
-                    cv2.line(mask, (x1, y1), (x2, y2), (0, 0, 0), 2)
+               cv2.drawContours(mask, [contour], -1, (0, 255, 0), 2)
 
-                    msg.data = int(error)
-                    
+           msg.data = int(error)
            self.pub.publish(msg)
            self.get_logger().info(f"Error mínimo: {error} píxeles")
            cv2.imshow("Puzzlebot", mask)
@@ -76,3 +76,4 @@ def main(args=None):
 
 if __name__ == "__main__":
    main()
+
