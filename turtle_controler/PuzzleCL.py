@@ -1,8 +1,8 @@
 #! /usr/bin/env python3
-import rclpy,time,math,sys
-from rclpy.node import Node
-from geometry_msgs.msg import Twist
-from turtlesim.msg import Pose
+import rclpy,time,math,sys # type: ignore
+from rclpy.node import Node# type: ignore
+from geometry_msgs.msg import Twist# type: ignore
+from turtlesim.msg import Pose# type: ignore
 from std_msgs.msg import Float32, Bool
 
 
@@ -195,7 +195,7 @@ class Controler(Node):
 
     
 
-      
+   def principal(self):
       print("begin...")
       time.sleep(4)
       for coo in self.lista:
