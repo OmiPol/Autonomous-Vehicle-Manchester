@@ -62,7 +62,7 @@ class LineDetect(Node):
 
            msg.data = int(error)
            self.pub.publish(msg)
-           self.get_logger().info(f"Error mínimo: {error} píxeles")
+           #self.get_logger().info(f"Error mínimo: {error} píxeles")
            cv2.imshow("Puzzlebot", mask)
            cv2.waitKey(1)
            

@@ -22,11 +22,21 @@ def generate_launch_description():
       executable = 'PuzzleSM',
       output = 'screen',)   
    
-   PuzzleCL = Node(
+   #PuzzleCL = Node(
+    #  package='turtle_controler',
+     # executable = 'PuzzleCL',
+      #output = 'screen',)
+
+   PuzzleLineCL = Node(
       package='turtle_controler',
-      executable = 'PuzzleCL',
+      executable = 'PuzzleLineCL',
+      output = 'screen',)
+   
+   Linea = Node(
+      package='turtle_controler',
+      executable = 'Linea',
       output = 'screen',)
       
-   l_d = LaunchDescription([odometry, Semaforo, PuzzleSM,PuzzleCL])
+   l_d = LaunchDescription([odometry, Semaforo, PuzzleSM, PuzzleLineCL, Linea])
    return l_d
    

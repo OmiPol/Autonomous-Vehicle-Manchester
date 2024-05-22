@@ -37,7 +37,8 @@ setup(
         "PuzzleCL = turtle_controler.PuzzleCL:main",
         "Semaforo = turtle_controler.Semaforo:main",
         "Linea = turtle_controler.Linea:main",
-        "PuzzleSM = turtle_controler.PuzzleSM:main"
+        "PuzzleSM = turtle_controler.PuzzleSM:main",
+        "PuzzleLineCL = turtle_controler.PuzzleLineCL:main",
         ],
     },
 )
