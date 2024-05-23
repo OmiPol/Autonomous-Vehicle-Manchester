@@ -75,7 +75,7 @@ class OpenCVBridge(Node):
                self.color = "No Light Detected!!!"
 
            self.im_with_keypoints = cv2.drawKeypoints(self.vid, keypoints,np.array([]), (255,255,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-           cv2.imshow("Puzzlebot", self.vid)
+           cv2.imshow("Semaforo", self.vid)
            #self.get_logger().info(self.color)
            cv2.waitKey(1)
            

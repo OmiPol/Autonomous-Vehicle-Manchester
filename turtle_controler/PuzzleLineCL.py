@@ -34,7 +34,7 @@ class Controler(Node):
       self.L = 0.66
       #Parametros de velocidades máximas
       self.linMax = 0.1
-      self.angMax = 0.3
+      self.angMax = 0.7
       #Tolerancias de error
       self.linTol = 0.05
       self.angTol = 0.05
@@ -63,14 +63,14 @@ class Controler(Node):
       self.Cent['Derecha']=fuzz.trimf(self.Cent.universe,[20,60, 80])
       self.Cent['Muy Derecha']=fuzz.smf(self.Cent.universe,50,160)
 
-      self.LinV['Poca']=fuzz.zmf(self.LinV.universe,0,3)
-      self.LinV['Media']=fuzz.trimf(self.LinV.universe,[2,4,6])
-      self.LinV['Alta']=fuzz.smf(self.LinV.universe,5,10)
+      self.LinV['Poca']=fuzz.zmf(self.LinV.universe,2,5)#original 0,3
+      self.LinV['Media']=fuzz.trimf(self.LinV.universe,[3,5,7]) #original 2,4,6
+      self.LinV['Alta']=fuzz.smf(self.LinV.universe,5,10) #orignal 5,10
 
       self.AngV['Muy Izquierda']=fuzz.zmf(self.AngV.universe,-10,-4)
-      self.AngV['Izquierda']=fuzz.trimf(self.AngV.universe,[-5,-4,-1])
+      self.AngV['Izquierda']=fuzz.trimf(self.AngV.universe,[-6,-5,-2]) #orignal -5, -4, -1
       self.AngV['Cero']=fuzz.trimf(self.AngV.universe,[-2,0,2])
-      self.AngV['Derecha']=fuzz.trimf(self.AngV.universe,[1,4,5])
+      self.AngV['Derecha']=fuzz.trimf(self.AngV.universe,[2,5,6]) #original 1,4,5
       self.AngV['Muy Derecha']=fuzz.smf(self.AngV.universe,4,10)
 
       self.r1 = control.Rule(self.Cent['Muy Izquierda'],(self.LinV['Poca'],self.AngV['Muy Derecha']))
@@ -104,9 +104,12 @@ class Controler(Node):
       
          self.lineFollow.compute() 
       
-         Lineal = (self.lineFollow.output['LinV'])/10 *self.linMax #
+         Lineal = (self.lineFollow.output['LinV'])/10 *self.linMax*self.speed #
      
-         Angular = (self.lineFollow.output['AngV'])/10 *self.linMax
+         Angular = (self.lineFollow.output['AngV'])/10 *self.angMax*self.speed #
+
+         #self.get_logger().info(f"Lineal: {Lineal}")
+         #self.get_logger().info(f"Angular: {Angular}")
       
       
          msg.linear.x = max(min(Lineal,self.linMax),-self.linMax) #lineal v
