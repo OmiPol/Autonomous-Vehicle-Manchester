@@ -28,7 +28,7 @@ class Controler(Node):
       
       self.pose = None
       #Valores de constantes proporcionales
-      self.Kv = 0.2
+      self.Kv = 0.15
       self.Ka = 0.85 #anterior 0.7
 
       self.L = 0.66
@@ -63,7 +63,7 @@ class Controler(Node):
       self.Cent['Derecha']=fuzz.trimf(self.Cent.universe,[20,60, 80])
       self.Cent['Muy Derecha']=fuzz.smf(self.Cent.universe,50,160)
 
-      self.LinV['Poca']=fuzz.zmf(self.LinV.universe,2,5)#original 0,3
+      self.LinV['Poca']=fuzz.zmf(self.LinV.universe,3,6)#original 0,3
       self.LinV['Media']=fuzz.trimf(self.LinV.universe,[3,5,7]) #original 2,4,6
       self.LinV['Alta']=fuzz.smf(self.LinV.universe,5,10) #orignal 5,10
 
