@@ -47,30 +47,30 @@ class OpenCVBridge(Node):
                     y = int(kp.pt[1]);
                     pixel_center = self.hsv_img[y,x]
                     hue_value = pixel_center[0]  
-                    if (hue_value >= 0 and hue_value < 12) or (hue_value >= 165 and hue_value < 181):
+                    if (hue_value >= 0 and hue_value < 11) or (hue_value >= 170 and hue_value < 181):
                        self.color = "RED"
                        msg.data = 'r'
                        self.pub.publish(msg)
                     
-                    elif (hue_value >= 12 and hue_value < 30):
+                    elif (hue_value >= 12 and hue_value < 45):
                        self.color = "YELLOW"
                        msg.data = 'y'
                        self.pub.publish(msg)
                     
-                    elif (hue_value >= 75 and hue_value < 100):
+                    elif (hue_value >= 50 and hue_value < 86):
                        self.color = "GREEN"
                        msg.data = 'g'
                        self.pub.publish(msg)
                     
-                    elif ((hue_value >= 0 and hue_value < 12) or (hue_value >= 165 and hue_value < 181))and (hue_value >= 75 and hue_value < 100):
-                       self.color = "RED"
-                       msg.data = 'r'
-                       self.pub.publish(msg)
+                  #   elif ((hue_value >= 0 and hue_value < 11) or (hue_value >= 170 and hue_value < 181))and (hue_value >= 50 and hue_value < 86):
+                  #      self.color = "RED"
+                  #      msg.data = 'r'
+                  #      self.pub.publish(msg)
                     
-                    elif ((hue_value >= 0 and hue_value < 12) or (hue_value >= 165 and hue_value < 181))and (hue_value >= 12 and hue_value < 30):
-                       self.color = "RED"
-                       msg.data = 'r'
-                       self.pub.publish(msg)
+                  #   elif ((hue_value >= 0 and hue_value < 11) or (hue_value >= 170 and hue_value < 181))and (hue_value >= 12 and hue_value < 45):
+                  #      self.color = "RED"
+                  #      msg.data = 'r'
+                  #      self.pub.publish(msg)
            else:
                self.color = "No Light Detected!!!"
 

@@ -39,6 +39,7 @@ setup(
         "Linea = turtle_controler.Linea:main",
         "PuzzleSM = turtle_controler.PuzzleSM:main",
         "PuzzleLineCL = turtle_controler.PuzzleLineCL:main",
+        "color_checker = turtle_controler.color_checker:main",
         ],
     },
 )
