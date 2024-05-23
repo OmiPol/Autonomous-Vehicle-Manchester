@@ -9,7 +9,7 @@ from std_msgs.msg import Float32, String
 
 class OpenCVBridge(Node):
    def __init__(self):
-       super().__init__("image_processing")
+       super().__init__("Detecion_Semaforo")
        self.get_logger().info("Cam Subscriber Started...!!!")
        self.vid = None
        self.bridge = CvBridge()

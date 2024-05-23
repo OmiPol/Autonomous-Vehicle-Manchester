@@ -7,7 +7,7 @@ from sensor_msgs.msg import Image
 class OpenCVBridge(Node):
    def __init__(self):
       
-      super().__init__("image_processing") #declara el nodo
+      super().__init__("CV_bridge") #declara el nodo
       self.get_logger().info("Node initiated")
       
       self.img = Noneself.bridge = CvBridge()

@@ -9,7 +9,7 @@ from std_msgs.msg import Float32, Int32
 
 class LineDetect(Node):
    def __init__(self):
-       super().__init__("image_processing")
+       super().__init__("Line_Detection")
        self.get_logger().info("Cam Subscriber Started...!!!")
        self.vid = None
        self.sub = self.create_subscription(Image, '/video_source/raw',self.camera_callback,10)
