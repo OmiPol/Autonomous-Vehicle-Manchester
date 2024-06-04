@@ -39,11 +39,9 @@ setup(
         "Linea = turtle_controler.Linea:main",
         "PuzzleSM = turtle_controler.PuzzleSM:main",
         "PuzzleLineCL = turtle_controler.PuzzleLineCL:main",
-<<<<<<< Updated upstream
         "color_checker = turtle_controler.color_checker:main",
-=======
         "Linea2 = turtle_controler.Linea2:main",
->>>>>>> Stashed changes
+
         ],
     },
 )
