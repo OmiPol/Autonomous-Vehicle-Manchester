@@ -20,11 +20,13 @@ class Controler(Node):
       self.ack = self.create_publisher(Bool,"acknowledged",1)
       self.strl = self.create_subscription(Float32,"/states",self.callback_light,1)
       self.line = self.create_subscription(Int32, "/line_error",self.callback_line,1)
+      self.zebra = self.create_subscription(Int32, "/zebra",self.callback_zebra,1)
       
       self.fuzz = self.create_timer(0.02,self.callback_fuzzy)
       
       self.envelope = 0.0
       self.speed = 0.0
+      self.zebra = 0
       
       self.pose = None
       #Valores de constantes proporcionales
@@ -94,6 +96,10 @@ class Controler(Node):
    def callback_line(self,msg):
       
       self.linpos = msg.data #Actuizar dato
+
+   def callback_zebra(self,msg):
+      self.zebra = msg.data
+
       
    def callback_fuzzy(self):
       
@@ -104,9 +110,9 @@ class Controler(Node):
       
          self.lineFollow.compute() 
       
-         Lineal = (self.lineFollow.output['LinV'])/10 *self.linMax*self.speed #
+         Lineal = (self.lineFollow.output['LinV'])/10 *self.linMax *self.zebra#*self.speed #
      
-         Angular = (self.lineFollow.output['AngV'])/10 *self.angMax*self.speed #
+         Angular = (self.lineFollow.output['AngV'])/10 *self.angMax*self.zebra#*self.speed #
 
          #self.get_logger().info(f"Lineal: {Lineal}")
          #self.get_logger().info(f"Angular: {Angular}")
