@@ -146,6 +146,19 @@ class Controler(Node):
          self.move_straight()
          return
       
+      if(self.state == "cruza_crucero_left" or self.state == "cruza_crucero_left_ign_ln"):
+         self.speed = 0.7
+         self.time = 0.5
+         self.move_left()
+         return
+
+      if(self.state == "cruza_crucero_right" or self.state == "cruza_crucero_right_ign_ln"):
+         self.speed = 0.7
+         self.time = 0.5
+         self.move_right()
+         return
+      
+      
       if(self.state == "slow"):
          self.speed = 0.4
          self.time = 2.5
@@ -184,6 +197,18 @@ class Controler(Node):
       msg = Twist()
       msg.linear.x = self.linMax * self.envelope
       self.pub.publish(msg)#lineal v
+
+   def move_left(self):
+      msg = Twist()
+      msg.linear.x = self.linMax * 0.5
+      msg.angular.z = self.angMax *-0.5
+      self.pub.publish(msg)
+
+   def move_right(self):
+      msg = Twist()
+      msg.linear.x = self.linMax * 0.5
+      msg.angular.z = self.angMax *0.5
+      self.pub.publish(msg)
       
 def main(args=None):
    rclpy.init(args=args) #inicializa
