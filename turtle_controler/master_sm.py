@@ -38,9 +38,15 @@ class SM(Node):
       #seguir_linea--
       #atiende_zebra--
       #espera --
+
+      #cruza_crucero_right_ign_ln PENDIENTE
+      #cruza_crucero_left_ign_ln PENDIENTE
+      #cruza_crucero_straight_ign_ln  
+
       #cruza_crucero_rightPENDIENTE
       #cruza_crucero_left PENDIENTE
       #cruza_crucero_straight --
+      
       #slow--
       #give_way --
       #seguir_ign_gw--
@@ -95,35 +101,66 @@ class SM(Node):
             self.state = "espera"
             return
         
-        #ESTADOS DE DIRECCIÓN
+        #ESTADOS DE AUTONOMÍA IGNORANDO LINEAS
         
         #Casos de Right
         if (self.state == "espera" and self.light == "green" and self.turn == "turn_right_ahead" ):
-            self.state = "cruza_crucero_right"
+            self.state = "cruza_crucero_right_ign_ln"
             return
         
         if (self.state == "atiende_zebra" and self.light == "green" and self.turn == "turn_right_ahead"):
-            self.state = "cruza_crucero_right"
+            self.state = "cruza_crucero_right_ign_ln"
             return
         
         #Casos de Straight Ahead
         if (self.state == "espera" and self.light == "green" and self.turn == "ahead_only" ):
-            self.state = "cruza_crucero_straight"
+            self.state = "cruza_crucero_straight_ign_ln"
             return
         
         if (self.state == "atiende_zebra" and self.light == "green" and self.turn == "ahead_only"):
-            self.state = "cruza_crucero_straight"
+            self.state = "cruza_crucero_straight_ign_ln"
             return
-        #print("holi")
+
         #Casos de Left
         if (self.state == "espera" and self.light == "green" and self.turn == "turn_left_ahead" ):
-            self.state = "cruza_crucero_left"
+            self.state = "cruza_crucero_left_ign_ln"
             return
         
         if (self.state == "atiende_zebra" and self.light == "green" and self.turn == "turn_left_ahead"):
-            self.state = "cruza_crucero_left"
+            self.state = "cruza_crucero_left_ign_ln"
             return
         
+        #Timers para tiempo de autonomía
+
+        if (self.state == "cruza_crucero_straight_ign_ln" and self.contador < 4):
+            self.contador = self.contador + self.callback_time
+            return
+
+        if (self.state == "cruza_crucero_straight_ign_ln" and self.contador >= 4):
+            self.state = "cruza_crucero_straight"
+            return
+
+        if (self.state == "cruza_crucero_right_ign_ln" and self.contador < 4):
+            self.contador = self.contador + self.callback_time
+            return
+
+        if (self.state == "cruza_crucero_right_ign_ln" and self.contador >= 4):
+            self.state = "cruza_crucero_right"
+            return
+        
+        if (self.state == "cruza_crucero_left_ign_ln" and self.contador < 4):
+            self.contador = self.contador + self.callback_time
+            return
+
+        if (self.state == "cruza_crucero_left_ign_ln" and self.contador >= 4):
+            self.state = "cruza_crucero_left"
+            return
+
+        
+
+        #ESTADO DE AUTONOMÍA BUSCANDO LINEAS
+
+
         #Regreso a seguidor de linea
         
         if (self.state == "cruza_crucero_left" and self.lineas == "linea" ):

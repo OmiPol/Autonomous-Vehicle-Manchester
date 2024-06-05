@@ -138,7 +138,8 @@ class Controler(Node):
       if(self.state=="espera"):
          self.move_straight()
          return
-      if(self.state == "cruza_crucero_straight"):
+      
+      if(self.state == "cruza_crucero_straight" or self.state == "cruza_crucero_straight_ign_ln"):
          self.speed = 0.7
          self.time = 0.5
          self.move_straight()
