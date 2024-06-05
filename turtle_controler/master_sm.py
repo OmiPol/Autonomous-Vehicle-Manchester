@@ -18,16 +18,17 @@ class SM(Node):
       
       self.strl = self.create_subscription(String,"/state_streetlight",self.callback_light,1)
       self.turnsign = self.create_subscription(String,"/turn_sign",self.callback_turn,1)
-      self.warningsign = self.create_subscription(String,"/warning_sign",self.callback_warn,1)
+      self.warningsign = self.create_subscription(String,"/warn_sign",self.callback_warn,1)
       self.lineas = self.create_subscription(String,"/lineas",self.callback_lineas,1)
       
       self.callback_time = 0.08
       self.state_machine = self.create_timer(self.callback_time,self.machine_callback)
       
+      
       #Inicia espacios de memoria
-      self.light = "rojo"
-      self.turn = "straight_forward"
-      self.warningsign = "null"
+      self.light = "green"
+      self.turn = "ahead_only"
+      self.warn_sign = "null"
       self.lineas = "linea"
       
       
@@ -57,11 +58,16 @@ class SM(Node):
     
     def callback_warn(self,msg):
         self.warningsign = msg.data
+
     def callback_lineas(self,msg):
         self.lineas = msg.data
+        #print("linea")
         
    
     def machine_callback(self):
+        msg = String()
+        msg.data = self.state
+        self.pub.publish(msg)
         
         if(self.state == "start"):
             self.state = "seguir_linea"
@@ -69,73 +75,73 @@ class SM(Node):
         
         #CRUCERO DE ZEBRA    
         if (self.state == "seguir_linea" and self.lineas == "zebra"):
-            self.state == "atiende_zebra"
+            self.state = "atiende_zebra"
             return
         
         if (self.state == "slow" and self.lineas == "zebra"):
-            self.state == "atiende_zebra"
+            self.state = "atiende_zebra"
             return
         
         if (self.state == "seguir_ign_gw" and self.lineas == "zebra"):
-            self.state == "atiende_zebra"
+            self.state = "atiende_zebra"
             return
         
         
-        if (self.state == "atiende_zebra" and (self.light == "rojo" or self.light == "amarillo")):
-            self.state == "espera"
+        if (self.state == "atiende_zebra" and (self.light == "red" or self.light == "yellow")):
+            self.state = "espera"
             return
         
-        if (self.state == "espera" and (self.light == "rojo" or self.light == "amarillo")):
-            self.state == "espera"
+        if (self.state == "espera" and (self.light == "red" or self.light == "yellow")):
+            self.state = "espera"
             return
         
         #ESTADOS DE DIRECCIÓN
         
         #Casos de Right
-        if (self.state == "espera" and self.light == "verde" and self.callback_turn == "right" ):
-            self.state == "cruza_cruzero_right"
+        if (self.state == "espera" and self.light == "green" and self.turn == "turn_right_ahead" ):
+            self.state = "cruza_crucero_right"
             return
         
-        if (self.state == "atiende_zebra" and self.light == "verde" and self.callback_turn == "right"):
-            self.state == "cruza_cruzero_right"
+        if (self.state == "atiende_zebra" and self.light == "green" and self.turn == "turn_right_ahead"):
+            self.state = "cruza_crucero_right"
             return
         
         #Casos de Straight Ahead
-        if (self.state == "espera" and self.light == "verde" and self.callback_turn == "straight_ahead" ):
-            self.state == "cruza_cruzero_straight"
+        if (self.state == "espera" and self.light == "green" and self.turn == "ahead_only" ):
+            self.state = "cruza_crucero_straight"
             return
         
-        if (self.state == "atiende_zebra" and self.light == "verde" and self.callback_turn == "straight_ahead"):
-            self.state == "cruza_cruzero_straight"
+        if (self.state == "atiende_zebra" and self.light == "green" and self.turn == "ahead_only"):
+            self.state = "cruza_crucero_straight"
             return
-        
+        #print("holi")
         #Casos de Left
-        if (self.state == "espera" and self.light == "verde" and self.callback_turn == "left" ):
-            self.state == "cruza_cruzero_left"
+        if (self.state == "espera" and self.light == "green" and self.turn == "turn_left_ahead" ):
+            self.state = "cruza_crucero_left"
             return
         
-        if (self.state == "atiende_zebra" and self.light == "verde" and self.callback_turn == "left"):
-            self.state == "cruza_cruzero_left"
+        if (self.state == "atiende_zebra" and self.light == "green" and self.turn == "turn_left_ahead"):
+            self.state = "cruza_crucero_left"
             return
         
         #Regreso a seguidor de linea
         
         if (self.state == "cruza_crucero_left" and self.lineas == "linea" ):
-            self.state == "seguir_linea"
+            self.state = "seguir_linea"
             return
         
         if (self.state == "cruza_crucero_right" and self.lineas == "linea" ):
-            self.state == "seguir_linea"
+            self.state = "seguir_linea"
             return
         
         if (self.state == "cruza_crucero_straight" and self.lineas == "linea" ):
-            self.state == "seguir_linea"
+            self.state = "seguir_linea"
             return
         
         #Estados de Alerta
         
-        if (self.state == "seguir_linea" and self.warningsign == "road_work_ahead" ):
-            self.state == "slow"
+        if (self.state == "seguir_linea" and self.warn_sign == "roadwork_ahead" ):
+            self.state = "slow"
             return
         
         if (self.state == "slow" and self.contador < 3):
@@ -147,7 +153,7 @@ class SM(Node):
             self.state = "seguir_linea"
             return
             
-        if (self.state == "seguir_linea" and self.warningsign == "give_way"):
+        if (self.state == "seguir_linea" and self.warn_sign == "give_way"):
             self.state = "give_way"
             return
         
@@ -169,15 +175,15 @@ class SM(Node):
             self.state = "seguir_linea"
             return
         #Estado final
-        if (self.state == "seguir_linea" and self.warningsign == "stop"):
+        if (self.state == "seguir_linea" and self.warn_sign == "stop"):
             self.state = "end"
             return
         
-        if (self.state == "slow" and self.warningsign == "stop"):
+        if (self.state == "slow" and self.warn_sign == "stop"):
             self.state = "end"
             return
         
-        if (self.state == "seguir_ign_gw" and self.warningsign == "stop"):
+        if (self.state == "seguir_ign_gw" and self.warn_sign == "stop"):
             self.state = "end"
             return
             
