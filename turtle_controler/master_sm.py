@@ -39,12 +39,12 @@ class SM(Node):
       #atiende_zebra--
       #espera --
 
-      #cruza_crucero_right_ign_ln PENDIENTE
-      #cruza_crucero_left_ign_ln PENDIENTE
+      #cruza_crucero_right_ign_ln --
+      #cruza_crucero_left_ign_ln --
       #cruza_crucero_straight_ign_ln  
 
-      #cruza_crucero_rightPENDIENTE
-      #cruza_crucero_left PENDIENTE
+      #cruza_crucero_right --
+      #cruza_crucero_left --
       #cruza_crucero_straight --
       
       #slow--
@@ -132,27 +132,27 @@ class SM(Node):
         
         #Timers para tiempo de autonomía
 
-        if (self.state == "cruza_crucero_straight_ign_ln" and self.contador < 4):
+        if (self.state == "cruza_crucero_straight_ign_ln" and self.contador < 5):
             self.contador = self.contador + self.callback_time
             return
 
-        if (self.state == "cruza_crucero_straight_ign_ln" and self.contador >= 4):
+        if (self.state == "cruza_crucero_straight_ign_ln" and self.contador >= 5):
             self.state = "cruza_crucero_straight"
             return
 
-        if (self.state == "cruza_crucero_right_ign_ln" and self.contador < 4):
+        if (self.state == "cruza_crucero_right_ign_ln" and self.contador < 5):
             self.contador = self.contador + self.callback_time
             return
 
-        if (self.state == "cruza_crucero_right_ign_ln" and self.contador >= 4):
+        if (self.state == "cruza_crucero_right_ign_ln" and self.contador >= 5):
             self.state = "cruza_crucero_right"
             return
         
-        if (self.state == "cruza_crucero_left_ign_ln" and self.contador < 4):
+        if (self.state == "cruza_crucero_left_ign_ln" and self.contador < 5):
             self.contador = self.contador + self.callback_time
             return
 
-        if (self.state == "cruza_crucero_left_ign_ln" and self.contador >= 4):
+        if (self.state == "cruza_crucero_left_ign_ln" and self.contador >= 5):
             self.state = "cruza_crucero_left"
             return
 
