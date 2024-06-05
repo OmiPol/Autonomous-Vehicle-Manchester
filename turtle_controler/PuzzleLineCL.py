@@ -6,7 +6,7 @@ import rclpy,time,math,sys # type: ignore
 from rclpy.node import Node # type: ignore
 from geometry_msgs.msg import Twist # type: ignore
 from turtlesim.msg import Pose # type: ignore
-from std_msgs.msg import Float32, Bool, Int32
+from std_msgs.msg import Float32, Bool, Int32, String
 
 
 class Controler(Node):
@@ -104,16 +104,17 @@ class Controler(Node):
       self.state = msg.data
     
    def callback_envelope(self):
-      dif = self.speed - self.envelope
-      if(abs(dif) >= self.thresh and self.flag == True):
-               iteraciones= self.tiempo/self.interval
-               self.adder = (dif)/ iteraciones
-               self.flag = False
-      if(abs(dif)<= self.thresh):
-         self.flag == True
-      else:
-         self.envelope = self.envelope + self.adder
-      
+      #dif = self.speed - self.envelope
+      #if(abs(dif) >= self.thresh and self.flag == True):
+      #         iteraciones= self.tiempo/self.interval
+      #         self.adder = (dif)/ iteraciones
+      #         self.flag = False
+      #if(abs(dif)<= self.thresh):
+      #   self.flag == True
+      #else:
+      #   self.envelope = self.envelope + self.adder
+      print(self.envelope)
+      self.envelope = self.speed
         
    
    def master_control(self):
