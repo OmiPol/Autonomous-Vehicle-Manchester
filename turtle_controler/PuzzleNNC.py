@@ -17,7 +17,7 @@ class CameraSubscrber(Node):
         self.get_logger().info("Yolo Subscriber Started...!!!")
         self.img_pub = self.create_publisher(Image, '/image_inference_result', 1)
         self.igm_sub = self.create_subscription(Image, '/video_source/raw',self.camera_callback,10)
-        self.model = YOLO('/home/ivndx/ros2_ws/src/yolov8_ros2/yolov8_ros2/Test5.pt')
+        self.model = YOLO('/home/ivndx/ros2_ws/src/turtle_controler/turtle_controler/Test5.pt')
         self.yolov8_inference = Yolov8Inference()
         self.yolov8_pub = self.create_publisher(Yolov8Inference, '/yolov8_inference', 1)
         self.pub_turn_sign = self.create_publisher(String, '/turn_sign', 1)
