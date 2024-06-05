@@ -17,16 +17,22 @@ class Controler(Node):
       #Creación de subscriptores y publicadores
       self.pub = self.create_publisher(Twist, "/cmd_vel", 1)
       self.sub= self.create_subscription(Pose,"/pose",self.callback_turtle_pose,1)
-      self.ack = self.create_publisher(Bool,"acknowledged",1)
-      self.strl = self.create_subscription(Float32,"/states",self.callback_light,1)
       self.line = self.create_subscription(Int32, "/line_error",self.callback_line,1)
-      self.zebra = self.create_subscription(Int32, "/zebra",self.callback_zebra,1)
+      self.state = self.create_subscription(String,"/master_state",self.callback_state,1)
+      self.fuzz = self.create_timer(0.02,self.master_control)
+      self.timer = self.create_timer(0.02,self.callback_envelope)
       
-      self.fuzz = self.create_timer(0.02,self.callback_fuzzy)
-      
-      self.envelope = 0.0
-      self.speed = 0.0
-      self.zebra = 0
+      #Control de velocidad
+      self.envelope = 0.0 #Multiplica la salida de velocidad
+      self.speed = 0.0 #Define el valor de envelope
+      self.tiempo = 1.0 #define tiempo a alcanzar siguiente valor
+      self.interval = 0.02 #tiempo de llamado de callback
+      self.adder = 0.2
+      self.flag = True #una bandera idk
+      self.thresh = 0.03 #Threshold
+
+      #Estado
+      self.state = "start"
       
       self.pose = None
       #Valores de constantes proporcionales
@@ -88,20 +94,70 @@ class Controler(Node):
    
    def callback_turtle_pose(self,msg):
       #Se recibe la pose del robot del node de odometría
-      self.pose = msg
-   
-   def callback_light(self,msg):
-      self.speed = msg.data   
-      
+      self.pose = msg 
+
    def callback_line(self,msg):
-      
+      #Recibe dato de posición de la linea
       self.linpos = msg.data #Actuizar dato
 
-   def callback_zebra(self,msg):
-      self.zebra = msg.data
-
+   def callback_state(self,msg):
+      self.state = msg.data
+    
+   def callback_envelope(self):
+      dif = self.speed - self.envelope
+      if(abs(dif) >= self.thresh and self.flag == True):
+               iteraciones= self.tiempo/self.interval
+               self.adder = (dif)/ iteraciones
+               self.flag = False
+      if(abs(dif)<= self.thresh):
+         self.flag == True
+      else:
+         self.envelope = self.envelope + self.adder
       
-   def callback_fuzzy(self):
+        
+   
+   def master_control(self):
+      
+      if (self.state == "start" or self.state == "end" or self.state == "give_way"):
+         msg = Twist()
+         self.pub.publish(msg)
+         return
+      
+      if(self.state == "seguir_linea" or self.state == "seguir_ign_gw"):
+         self.speed = 1.0
+         self.time = 2.0
+         self.line_control()
+         return
+      
+      if(self.state == "atiende_zebra"):
+         self.speed = 0.0
+         self.time = 1.0
+         self.move_straight()
+         return
+      
+      if(self.state=="espera"):
+         self.move_straight()
+         return
+      if(self.state == "cruza_crucero_straight"):
+         self.speed = 0.7
+         self.time = 0.5
+         self.move_straight()
+         return
+      
+      if(self.state == "slow"):
+         self.speed = 0.4
+         self.time = 2.5
+         self.line_control
+         return
+      
+      
+
+         
+      
+         
+         
+      
+   def line_control(self):
       
       #print("a")
       msg = Twist()
@@ -110,9 +166,9 @@ class Controler(Node):
       
          self.lineFollow.compute() 
       
-         Lineal = (self.lineFollow.output['LinV'])/10 *self.linMax *self.zebra#*self.speed #
+         Lineal = (self.lineFollow.output['LinV'])/10 *self.linMax *self.speed #
      
-         Angular = (self.lineFollow.output['AngV'])/10 *self.angMax*self.zebra#*self.speed #
+         Angular = (self.lineFollow.output['AngV'])/10 *self.angMax*self.speed #
 
          #self.get_logger().info(f"Lineal: {Lineal}")
          #self.get_logger().info(f"Angular: {Angular}")
@@ -122,7 +178,10 @@ class Controler(Node):
          msg.angular.z = max(min(Angular,self.angMax),-self.angMax) # anular w
       self.pub.publish(msg)
     
-
+   def move_straight(self):
+      msg = Twist()
+      msg.linear.x = self.linMax * self.envelope
+      self.pub.publish(msg)#lineal v
       
 def main(args=None):
    rclpy.init(args=args) #inicializa
