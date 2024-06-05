@@ -138,6 +138,7 @@ class SM(Node):
 
         if (self.state == "cruza_crucero_straight_ign_ln" and self.contador >= 4):
             self.state = "cruza_crucero_straight"
+            self.contador =0.0
             return
 
         if (self.state == "cruza_crucero_right_ign_ln" and self.contador < 4):
@@ -146,6 +147,7 @@ class SM(Node):
 
         if (self.state == "cruza_crucero_right_ign_ln" and self.contador >= 4):
             self.state = "cruza_crucero_right"
+            self.contador =0.0
             return
         
         if (self.state == "cruza_crucero_left_ign_ln" and self.contador < 4):
@@ -154,6 +156,7 @@ class SM(Node):
 
         if (self.state == "cruza_crucero_left_ign_ln" and self.contador >= 4):
             self.state = "cruza_crucero_left"
+            self.contador =0.0
             return
 
         
