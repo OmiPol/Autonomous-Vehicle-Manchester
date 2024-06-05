@@ -42,6 +42,8 @@ setup(
         "color_checker = turtle_controler.color_checker:main",
         "Linea2 = turtle_controler.Linea2:main",
         "PuzzleNNC = turtle_controler.PuzzleNNC:main",
+        "master_sm = turtle_controler.master_sm:main",
+
 
         ],
     },

@@ -14,7 +14,7 @@ class SM(Node):
       self.get_logger().info("SM Node initiated ")
       self.timer = self.create_timer(0.05, self.callback_action)
       #Creación de subscriptores y publicadores
-      self.pub = self.create_publisher(Float32, "/states", 1)
+      self.pub = self.create_publisher(String, "/states_streetlight", 1)
       self.strl = self.create_subscription(String,"/streetlight",self.callback_light,1)
       
       self.state = "start"
