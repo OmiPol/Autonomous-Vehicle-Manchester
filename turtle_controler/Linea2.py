@@ -6,7 +6,7 @@ from rclpy.node import Node
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import Twist
-from std_msgs.msg import Float32, Int32
+from std_msgs.msg import Float32, Int32, String
 
 class LineDetect(Node):
    def __init__(self):
@@ -14,8 +14,8 @@ class LineDetect(Node):
        self.get_logger().info("Cam Subscriber Started...!!!")
        self.vid = None
        self.sub = self.create_subscription(Image, '/video_source/raw',self.camera_callback,10)
-       self.pub1 = self.create_publisher(Int32, '/line_error', 10)
-       self.pub2 = self.create_publisher(Int32, '/zebra', 10)
+       self.pub_linea = self.create_publisher(Int32, '/line_error', 10)
+       self.pub_state = self.create_publisher(String, '/lineas', 10)
        self.timer1 = self.create_timer(0.05, self.timer_callback_zebras)
        self.timer2 = self.create_timer(0.05, self.timer_callback_line)
        self.width, self.height = 320,180
@@ -29,7 +29,7 @@ class LineDetect(Node):
        self.vid = self.bridge.imgmsg_to_cv2(msg, "bgr8") #bgr8
 
    def timer_callback_zebras(self): #Callback de deteccion de zebra
-    msg = Int32()
+    msg = String()
     if self.vid is not None:
         self.gray_img = cv2.cvtColor(self.vid, cv2.COLOR_BGR2GRAY)
         roi = self.gray_img[(self.height)*3//4:, self.width//4:3*self.width//2] # ROI en el tercio medio de la imagen
@@ -63,12 +63,10 @@ class LineDetect(Node):
         if len(centroids) >= 4 and len(centroids) <= 7:
             for i in range(len(centroids) - 2):
                 if abs(centroids[i][1] - centroids[i+1][1]) <= 5 and abs(centroids[i][1] - centroids[i+2][1]) <= 5:
-                    print("CRUCE DE ZEBRA")
-                    msg.data = 0
-                    self.pub2.publish(msg)
+                    msg.data = "zebras"
+                    self.pub_state.publish(msg)
         else:
-            msg.data = 1
-            self.pub2.publish(msg)
+            pass
 
         cv2.imshow("Cruces", mask)
         cv2.imshow("Full", self.vid)
@@ -125,8 +123,7 @@ class LineDetect(Node):
 
         msg.data = int(error)
                 
-        self.pub1.publish(msg)
-        #self.get_logger().info(f"Error mínimo: {error} píxeles")
+        self.pub_linea.publish(msg)
         cv2.imshow("Full", self.vid)
         cv2.imshow("Puzzlebot", mask)
         cv2.waitKey(1)
