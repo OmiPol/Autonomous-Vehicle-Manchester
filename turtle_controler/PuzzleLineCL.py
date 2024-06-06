@@ -20,16 +20,16 @@ class Controler(Node):
       self.line = self.create_subscription(Int32, "/line_error",self.callback_line,1)
       self.state = self.create_subscription(String,"/master_state",self.callback_state,1)
       self.fuzz = self.create_timer(0.02,self.master_control)
-      self.timer = self.create_timer(0.02,self.callback_envelope)
+      #self.timer = self.create_timer(0.02,self.callback_envelope)
       
       #Control de velocidad
       self.envelope = 0.0 #Multiplica la salida de velocidad
-      self.speed = 0.0 #Define el valor de envelope
-      self.tiempo = 1.0 #define tiempo a alcanzar siguiente valor
-      self.interval = 0.02 #tiempo de llamado de callback
-      self.adder = 0.2
-      self.flag = True #una bandera idk
-      self.thresh = 0.03 #Threshold
+      #self.speed = 0.0 #Define el valor de envelope
+      #self.tiempo = 1.0 #define tiempo a alcanzar siguiente valor
+      #self.interval = 0.02 #tiempo de llamado de callback
+      #self.adder = 0.2
+      #self.flag = True #una bandera idk
+      #self.thresh = 0.03 #Threshold
 
       #Estado
       self.state = "start"
@@ -102,68 +102,75 @@ class Controler(Node):
 
    def callback_state(self,msg):
       self.state = msg.data
+      #self.get_logger().info(str(self.state))
     
-   def callback_envelope(self):
+   #def callback_envelope(self):
       #dif = self.speed - self.envelope
-      #if(abs(dif) >= self.thresh and self.flag == True):
+      # if(abs(dif) >= self.thresh and self.flag == True):
       #         iteraciones= self.tiempo/self.interval
       #         self.adder = (dif)/ iteraciones
       #         self.flag = False
-      #if(abs(dif)<= self.thresh):
-      #   self.flag == True
-      #else:
+      #         #print(self.adder)
+      # if(abs(dif)<= self.thresh):
+      #   self.flag = True
+      #   #print("true")
+      # else:
       #   self.envelope = self.envelope + self.adder
-      print(self.envelope)
-      self.envelope = self.speed
+      # self.get_logger().info(str(self.envelope))
+      #self.envelope = self.speed
         
    
    def master_control(self):
       
-      if (self.state == "start" or self.state == "end" or self.state == "give_way"):
+      if (self.state == "start" or self.state == "give_way" or self.state == "ended"):
+         #self.get_logger().info(str(self.state))
          msg = Twist()
          self.pub.publish(msg)
          return
       
       if(self.state == "seguir_linea" or self.state == "seguir_ign_gw"):
-         self.speed = 1.0
-         self.time = 2.0
+         self.envelope = 1.0
          self.line_control()
          return
-      
+
+      if(self.state == "llega_a_zebra"):
+         self.envelope = 0.6
+         self.move_straight()
+         
       if(self.state == "atiende_zebra"):
-         self.speed = 0.0
-         self.time = 1.0
+         self.envelope = 1.0
          self.move_straight()
          return
       
       if(self.state=="espera"):
+         self.envelope = 0.0
          self.move_straight()
          return
       
       if(self.state == "cruza_crucero_straight" or self.state == "cruza_crucero_straight_ign_ln"):
-         self.speed = 0.7
-         self.time = 0.5
+         self.envelope = 0.7
          self.move_straight()
          return
       
       if(self.state == "cruza_crucero_left" or self.state == "cruza_crucero_left_ign_ln"):
-         self.speed = 0.7
-         self.time = 0.5
+         self.envelope = 0.7
          self.move_left()
          return
 
       if(self.state == "cruza_crucero_right" or self.state == "cruza_crucero_right_ign_ln"):
-         self.speed = 0.7
-         self.time = 0.5
+         self.envelope = 0.7
          self.move_right()
          return
       
       
       if(self.state == "slow"):
-         self.speed = 0.4
-         self.time = 2.5
+         self.envelope = 0.4
          self.line_control
          return
+
+      if(self.state == "ending"):
+         self.envelope=0.6
+         self.line_control()
       
       
 
@@ -181,9 +188,9 @@ class Controler(Node):
       
          self.lineFollow.compute() 
       
-         Lineal = (self.lineFollow.output['LinV'])/10 *self.linMax *self.speed #
+         Lineal = (self.lineFollow.output['LinV'])/10 *self.linMax *self.envelope #
      
-         Angular = (self.lineFollow.output['AngV'])/10 *self.angMax*self.speed #
+         Angular = (self.lineFollow.output['AngV'])/10 *self.angMax*self.envelope #
 
          #self.get_logger().info(f"Lineal: {Lineal}")
          #self.get_logger().info(f"Angular: {Angular}")
@@ -200,14 +207,14 @@ class Controler(Node):
 
    def move_left(self):
       msg = Twist()
-      msg.linear.x = self.linMax * 0.5
-      msg.angular.z = self.angMax *-0.5
+      msg.linear.x = self.linMax * 0.6
+      msg.angular.z = self.angMax *0.5
       self.pub.publish(msg)
 
    def move_right(self):
       msg = Twist()
-      msg.linear.x = self.linMax * 0.5
-      msg.angular.z = self.angMax *0.5
+      msg.linear.x = self.linMax * 0.6
+      msg.angular.z = self.angMax *-0.5
       self.pub.publish(msg)
       
 def main(args=None):

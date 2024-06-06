@@ -26,7 +26,7 @@ class SM(Node):
       
       
       #Inicia espacios de memoria
-      self.light = "green"
+      self.light = "red"
       self.turn = "ahead_only"
       self.warn_sign = "null"
       self.lineas = "linea"
@@ -36,7 +36,9 @@ class SM(Node):
       #Estados posibles
       #start --
       #seguir_linea--
+      #llega_a_zebra
       #atiende_zebra--
+      
       #espera --
 
       #cruza_crucero_right_ign_ln --
@@ -50,7 +52,8 @@ class SM(Node):
       #slow--
       #give_way --
       #seguir_ign_gw--
-      #end--
+      #ending--
+      #ended--
       
       #Contador
       self.contador = 0.0
@@ -58,12 +61,15 @@ class SM(Node):
     #Callbacks de obtención de datos  
     def callback_light(self,msg):
         self.light = msg.data
+        #print(self.light)
     
     def callback_turn(self,msg):
         self.turn = msg.data
-    
+        #print(self.turn)
+
     def callback_warn(self,msg):
-        self.warningsign = msg.data
+        self.warn_sign = msg.data
+        #print(self.warn_sign)
 
     def callback_lineas(self,msg):
         self.lineas = msg.data
@@ -81,17 +87,25 @@ class SM(Node):
         
         #CRUCERO DE ZEBRA    
         if (self.state == "seguir_linea" and self.lineas == "zebra"):
-            self.state = "atiende_zebra"
+            self.state = "llega_a_zebra"
             return
         
         if (self.state == "slow" and self.lineas == "zebra"):
-            self.state = "atiende_zebra"
+            self.state = "llega_a_zebra"
             return
         
         if (self.state == "seguir_ign_gw" and self.lineas == "zebra"):
-            self.state = "atiende_zebra"
+            self.state = "llega_a_zebra"
             return
-        
+
+        if(self.state == "llega_a_zebra" and self.contador < 1):
+            self.contador = self.contador + self.callback_time
+            return
+
+        if(self.state == "llega_a_zebra" and self.contador >= 1):
+            self.state = "atiende_zebra"
+            self.contador = 0.0
+            return
         
         if (self.state == "atiende_zebra" and (self.light == "red" or self.light == "yellow")):
             self.state = "espera"
@@ -141,20 +155,20 @@ class SM(Node):
             self.contador =0.0
             return
 
-        if (self.state == "cruza_crucero_right_ign_ln" and self.contador < 5):
+        if (self.state == "cruza_crucero_right_ign_ln" and self.contador < 4):
             self.contador = self.contador + self.callback_time
             return
 
-        if (self.state == "cruza_crucero_right_ign_ln" and self.contador >= 5):
+        if (self.state == "cruza_crucero_right_ign_ln" and self.contador >= 4):
             self.state = "cruza_crucero_right"
             self.contador =0.0
             return
         
-        if (self.state == "cruza_crucero_left_ign_ln" and self.contador < 5):
+        if (self.state == "cruza_crucero_left_ign_ln" and self.contador < 4):
             self.contador = self.contador + self.callback_time
             return
 
-        if (self.state == "cruza_crucero_left_ign_ln" and self.contador >= 5):
+        if (self.state == "cruza_crucero_left_ign_ln" and self.contador >= 4):
             self.state = "cruza_crucero_left"
             self.contador =0.0
             return
@@ -190,6 +204,7 @@ class SM(Node):
         
         if (self.state == "slow" and self.contador >= 3):
             self.contador = 0.0
+            self.warn_sign ="null"
             self.state = "seguir_linea"
             return
             
@@ -204,6 +219,7 @@ class SM(Node):
         if (self.state == "give_way" and self.contador >= 3):
             self.contador = 0.0
             self.state = "seguir_ign_gw"
+            self.warn_sign = "null"
             return
         
         if (self.state == "seguir_ign_gw" and self.contador < 4):
@@ -216,15 +232,24 @@ class SM(Node):
             return
         #Estado final
         if (self.state == "seguir_linea" and self.warn_sign == "stop"):
-            self.state = "end"
+            self.state = "ending"
             return
         
         if (self.state == "slow" and self.warn_sign == "stop"):
-            self.state = "end"
+            self.state = "ending"
             return
         
         if (self.state == "seguir_ign_gw" and self.warn_sign == "stop"):
-            self.state = "end"
+            self.state = "ending"
+            return
+
+        if (self.state == "ending" and self.contador < 5):
+            self.contador = self.contador + self.interval
+            return
+
+        if (self.state == "ending" and self.contador >= 5):
+            self.state = "ended"
+            self.contador = 0.0
             return
             
             
