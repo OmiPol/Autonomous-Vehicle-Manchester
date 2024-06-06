@@ -30,6 +30,8 @@ class SM(Node):
       self.turn = "ahead_only"
       self.warn_sign = "null"
       self.lineas = "linea"
+
+      self.interval = 0.2
       
       
       self.state = "start"
