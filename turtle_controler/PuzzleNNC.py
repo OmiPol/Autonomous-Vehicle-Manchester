@@ -52,8 +52,11 @@ class CameraSubscrber(Node):
             area = (self.inference_result.right - self.inference_result.left) * (self.inference_result.bottom - self.inference_result.top)
             #print(area)
 
-            if (name_class_detected != signal_detected) and (self.inference_result.confidence >= 0.95):
-                if (name_class_detected == "turn_left_ahead" or name_class_detected == "turn_right_ahead" or name_class_detected == "ahead_only") and (area >= 3500):
+            if (name_class_detected != signal_detected) and (self.inference_result.confidence >= 0.9):
+                if (name_class_detected == "ahead_only") and (area >= 3200):
+                    signal_detected = name_class_detected
+                    self.pub_turn_sign.publish(String(data=name_class_detected))
+                elif (name_class_detected == "turn_left_ahead"  or name_class_detected == "turn_right_ahead") and (area >= 1500 and area <= 2000):
                     signal_detected = name_class_detected
                     self.pub_turn_sign.publish(String(data=name_class_detected))
             else:
