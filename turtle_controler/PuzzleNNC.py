@@ -20,8 +20,6 @@ class CameraSubscrber(Node):
         self.model = YOLO('/home/ivndx/ros2_ws/src/turtle_controler/turtle_controler/Test5.pt')
         self.yolov8_inference = Yolov8Inference()
         self.yolov8_pub = self.create_publisher(Yolov8Inference, '/yolov8_inference', 1)
-        self.pub_turn_sign = self.create_publisher(String, '/turn_sign', 1)
-        self.pub_warn_sign = self.create_publisher(String, '/warn_sign', 1)
         self.minimal_valid_confidence = 0.5
 
 
@@ -49,6 +47,7 @@ class CameraSubscrber(Node):
             self.inference_result.right = int(bounding_box[3])
             self.yolov8_inference.yolov8_inference.append(self.inference_result)
 
+<<<<<<< Updated upstream
             if name_class_detected != signal_detected:
                 if name_class_detected == "turn_left_ahead" or name_class_detected == "turn_right_ahead" or name_class_detected == "ahead_only":
                     signal_detected = name_class_detected
@@ -61,6 +60,9 @@ class CameraSubscrber(Node):
                 self.pub_warn_sign.publish(String(data=name_class_detected))
             else:
                 pass
+=======
+            #self.pub_sign.publish(String(data=name_class_detected))
+>>>>>>> Stashed changes
 
         annotated_frame = result[0].plot()
         img_msg = bridge.cv2_to_imgmsg(annotated_frame, encoding='bgr8')

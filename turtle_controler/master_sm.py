@@ -16,7 +16,7 @@ class SM(Node):
       #Creación de subscriptores y publicadores
       self.pub = self.create_publisher(String, "/master_state", 1)
       
-      self.strl = self.create_subscription(String,"/state_streetlight",self.callback_light,1)
+      self.strl = self.create_subscription(String,"/streetlight",self.callback_light,1)
       self.turnsign = self.create_subscription(String,"/turn_sign",self.callback_turn,1)
       self.warningsign = self.create_subscription(String,"/warn_sign",self.callback_warn,1)
       self.lineas = self.create_subscription(String,"/lineas",self.callback_lineas,1)
