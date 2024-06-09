@@ -99,16 +99,16 @@ class SM(Node):
         if (self.state == "seguir_ign_gw" and self.lineas == "zebra"):
             self.state = "llega_a_zebra"
             return
-
-        if(self.state == "llega_a_zebra" and self.contador < 1):
+        #INICAN MODS
+        if(self.state == "llega_a_zebra" and self.contador < 2):
             self.contador = self.contador + self.callback_time
             return
 
-        if(self.state == "llega_a_zebra" and self.contador >= 1):
+        if(self.state == "llega_a_zebra" and self.contador >= 2):
             self.state = "atiende_zebra"
             self.contador = 0.0
             return
-        
+        #TERMINAN MODS
         if (self.state == "atiende_zebra" and (self.light == "red" or self.light == "yellow")):
             self.state = "espera"
             return
@@ -245,7 +245,7 @@ class SM(Node):
             self.state = "ending"
             return
 
-        if (self.state == "ending" and self.contador < 2):
+        if (self.state == "ending" and self.contador < 4): #MOD
             self.contador = self.contador + self.interval
             return
 
