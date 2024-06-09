@@ -204,17 +204,17 @@ class Controler(Node):
       msg = Twist()
       msg.linear.x = self.linMax * self.envelope
       self.pub.publish(msg)#lineal v
-
+   #MODIFICADAS MOVE_LEFT Y MOVE_RIGHT
    def move_left(self):
       msg = Twist()
       msg.linear.x = self.linMax * 0.7
-      msg.angular.z = self.angMax *0.5
+      msg.angular.z = self.angMax *0.3
       self.pub.publish(msg)
 
    def move_right(self):
       msg = Twist()
       msg.linear.x = self.linMax * 0.7
-      msg.angular.z = self.angMax *-0.5
+      msg.angular.z = self.angMax *-0.3
       self.pub.publish(msg)
       
 def main(args=None):
