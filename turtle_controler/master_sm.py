@@ -245,11 +245,11 @@ class SM(Node):
             self.state = "ending"
             return
 
-        if (self.state == "ending" and self.contador < 5):
+        if (self.state == "ending" and self.contador < 2):
             self.contador = self.contador + self.interval
             return
 
-        if (self.state == "ending" and self.contador >= 5):
+        if (self.state == "ending" and self.contador >= 2):
             self.state = "ended"
             self.contador = 0.0
             return

@@ -17,7 +17,7 @@ class CameraSubscrber(Node):
         self.get_logger().info("Yolo Subscriber Started...!!!")
         self.img_pub = self.create_publisher(Image, '/image_inference_result', 1)
         self.igm_sub = self.create_subscription(Image, '/video_source/raw',self.camera_callback,10)
-        self.model = YOLO('/home/ivndx/ros2_ws/src/turtle_controler/turtle_controler/Test5.pt')
+        self.model = YOLO('/home/ivndx/ros2_ws/src/turtle_controler/turtle_controler/best2.pt')
         self.yolov8_inference = Yolov8Inference()
         self.yolov8_pub = self.create_publisher(Yolov8Inference, '/yolov8_inference', 1)
         self.pub_turn_sign = self.create_publisher(String, '/turn_sign', 1)
@@ -49,6 +49,7 @@ class CameraSubscrber(Node):
             self.inference_result.right = int(bounding_box[3])
             self.yolov8_inference.yolov8_inference.append(self.inference_result)    
 
+<<<<<<< Updated upstream
             area = (self.inference_result.right - self.inference_result.left) * (self.inference_result.bottom - self.inference_result.top)
             #print(area)
 
@@ -67,6 +68,9 @@ class CameraSubscrber(Node):
                 self.pub_warn_sign.publish(String(data=name_class_detected))
             else:
                 pass
+=======
+            #self.pub_sign.publish(String(data=name_class_detected))
+>>>>>>> Stashed changes
 
         annotated_frame = result[0].plot()
         img_msg = bridge.cv2_to_imgmsg(annotated_frame, encoding='bgr8')

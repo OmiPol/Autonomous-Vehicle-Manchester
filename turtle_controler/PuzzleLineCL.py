@@ -207,13 +207,13 @@ class Controler(Node):
 
    def move_left(self):
       msg = Twist()
-      msg.linear.x = self.linMax * 0.6
+      msg.linear.x = self.linMax * 0.7
       msg.angular.z = self.angMax *0.5
       self.pub.publish(msg)
 
    def move_right(self):
       msg = Twist()
-      msg.linear.x = self.linMax * 0.6
+      msg.linear.x = self.linMax * 0.7
       msg.angular.z = self.angMax *-0.5
       self.pub.publish(msg)
       
