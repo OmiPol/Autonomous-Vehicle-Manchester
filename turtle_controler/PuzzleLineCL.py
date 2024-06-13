@@ -207,14 +207,20 @@ class Controler(Node):
    #MODIFICADAS MOVE_LEFT Y MOVE_RIGHT
    def move_left(self):
       msg = Twist()
-      msg.linear.x = self.linMax * 0.7
-      msg.angular.z = self.angMax *0.3
+      msg.linear.x = self.linMax * 0.5
+      msg.angular.z = self.angMax *0.4
       self.pub.publish(msg)
 
    def move_right(self):
       msg = Twist()
-      msg.linear.x = self.linMax * 0.7
-      msg.angular.z = self.angMax *-0.3
+      msg.linear.x = self.linMax * 0.5
+      msg.angular.z = self.angMax *-0.4
+      self.pub.publish(msg)
+
+   def turn_arround(self):
+      msg = Twist()
+      #print("turning ")
+      msg.angular.z = 0.6
       self.pub.publish(msg)
       
 def main(args=None):

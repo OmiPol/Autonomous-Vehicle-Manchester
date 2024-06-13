@@ -16,8 +16,8 @@ class CameraSubscrber(Node):
         super().__init__("yolo_cnn_object_detector")
         self.get_logger().info("Yolo Subscriber Started...!!!")
         self.img_pub = self.create_publisher(Image, '/image_inference_result', 1)
-        self.igm_sub = self.create_subscription(Image, '/video_source/raw',self.camera_callback,10)
-        self.model = YOLO('/home/ivndx/ros2_ws/src/turtle_controler/turtle_controler/best2.pt')
+        self.img_sub = self.create_subscription(Image, '/video_source/raw',self.camera_callback,10)
+        self.model = YOLO('/home/ivndx/ros2_ws/src/turtle_controler/turtle_controler/bestest.pt')
         self.yolov8_inference = Yolov8Inference()
         self.yolov8_pub = self.create_publisher(Yolov8Inference, '/yolov8_inference', 1)
         self.pub_turn_sign = self.create_publisher(String, '/turn_sign', 1)
@@ -49,28 +49,6 @@ class CameraSubscrber(Node):
             self.inference_result.right = int(bounding_box[3])
             self.yolov8_inference.yolov8_inference.append(self.inference_result)    
 
-<<<<<<< Updated upstream
-            area = (self.inference_result.right - self.inference_result.left) * (self.inference_result.bottom - self.inference_result.top)
-            #print(area)
-
-            if (name_class_detected != signal_detected) and (self.inference_result.confidence >= 0.9):
-                if (name_class_detected == "ahead_only") and (area >= 3200):
-                    signal_detected = name_class_detected
-                    self.pub_turn_sign.publish(String(data=name_class_detected))
-                elif (name_class_detected == "turn_left_ahead"  or name_class_detected == "turn_right_ahead") and (area >= 1500 and area <= 2000):
-                    signal_detected = name_class_detected
-                    self.pub_turn_sign.publish(String(data=name_class_detected))
-            else:
-                pass
-            
-            if (name_class_detected == "roadwork_ahead" or name_class_detected == "give_way" or name_class_detected == "stop") and (area >= 3500) and (self.inference_result.confidence > 0.95):
-                signal_detected = name_class_detected
-                self.pub_warn_sign.publish(String(data=name_class_detected))
-            else:
-                pass
-=======
-            #self.pub_sign.publish(String(data=name_class_detected))
->>>>>>> Stashed changes
 
         annotated_frame = result[0].plot()
         img_msg = bridge.cv2_to_imgmsg(annotated_frame, encoding='bgr8')

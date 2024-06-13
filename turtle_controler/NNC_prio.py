@@ -30,7 +30,6 @@ class NNC_Subscrber(Node):
             #print("holiwis")
             area = (detected.right - detected.left) * (detected.bottom - detected.top)            
             if(detected.class_name == "ahead_only" or detected.class_name == "turn_right_ahead" or detected.class_name == "turn_left_ahead") and (detected.confidence > 0.9):
-                #print(area)
                 if(detected.class_name == "ahead_only") and ((area >= 3200) or (area <= 1700 and area >= 1300)):
                     priority_turn = 2
                     self.pub_turn_sign.publish(String(data=detected.class_name))
@@ -44,14 +43,16 @@ class NNC_Subscrber(Node):
                 else:
                     pass
                 
-            elif(detected.class_name == "stop" or detected.class_name == "give_way" or detected.class_name == "roadwork_ahead") and (detected.confidence > 0.9):
-                if(detected.class_name == "roadwork_ahead") and (area >= 3200):
+            elif(detected.class_name == "stop" or detected.class_name == "give_way" or detected.class_name == "roadwork_ahead") and (detected.confidence > 0.8):
+                #print(area)
+                #print(detected.confidence)
+                if(detected.class_name == "roadwork_ahead") and (area >= 2500):
                     priority_warn = 2
                     self.pub_warn_sign.publish(String(data=detected.class_name))
-                elif(detected.class_name == "give_way") and (priority_warn < 2) and (area >= 3200):
+                elif(detected.class_name == "give_way") and (priority_warn < 2) and (area >= 2500):
                     priority_warn = 1
                     self.pub_warn_sign.publish(String(data=detected.class_name))
-                elif(detected.class_name == "stop") and (priority_warn < 2) and (area >= 3200):
+                elif(detected.class_name == "stop") and (priority_warn < 2) and (area >= 2500):
                     priority_warn = 0
                     self.pub_warn_sign.publish(String(data=detected.class_name))
                 else:

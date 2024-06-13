@@ -19,7 +19,7 @@ class LineDetect(Node):
        self.timer1 = self.create_timer(0.05, self.timer_callback_zebras)
        #self.timer2 = self.create_timer(0.05, self.timer_callback_line)
        self.width, self.height = 320,180
-       self.upper_left, self.lower_right  = (55,120),(265, 180)
+       self.upper_left, self.lower_right  = (45,120),(275, 180)
        self.color_img = np.uint16((self.width, self.height, 3))
        self.gray_img = np.uint16((self.width, self.height))
        self.edges_img = np.uint16((self.width, self.height))
@@ -35,13 +35,13 @@ class LineDetect(Node):
     if self.vid is not None:
         self.gray_img = cv2.cvtColor(self.vid, cv2.COLOR_BGR2GRAY)
         roi = self.gray_img[self.upper_left[1]:self.lower_right[1],self.upper_left[0]:self.lower_right[0]] # ROI en el tercio medio de la imagen
-        blurred = cv2.GaussianBlur(roi, (9, 9), 0)
-        _, mask = cv2.threshold(blurred, 85, 255, cv2.THRESH_BINARY_INV) # threshold for black color
+        blurred = cv2.GaussianBlur(roi, (15, 15), 0)
+        equ = cv2.convertScaleAbs(blurred, alpha=1.5, beta=-50)  # Aumentar el contraste y disminuir el brillo
+        optimal, mask = cv2.threshold(equ, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU) # threshold for black color
 
         #centro del roi
-        cx = 105
+        cx = 115
         cy = 30
-
         # find contours of the mask
         contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         
@@ -107,6 +107,7 @@ class LineDetect(Node):
             pass
 
         cv2.imshow("Cruces", mask)
+        cv2.imshow("equ", blurred)
         cv2.imshow("Full", self.vid)
         cv2.waitKey(1)
 

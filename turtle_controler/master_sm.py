@@ -30,8 +30,6 @@ class SM(Node):
       self.turn = "ahead_only"
       self.warn_sign = "null"
       self.lineas = "linea"
-
-      self.interval = 0.2
       
       
       self.state = "start"
@@ -157,20 +155,20 @@ class SM(Node):
             self.contador =0.0
             return
 
-        if (self.state == "cruza_crucero_right_ign_ln" and self.contador < 4):
+        if (self.state == "cruza_crucero_right_ign_ln" and self.contador < 5):
             self.contador = self.contador + self.callback_time
             return
 
-        if (self.state == "cruza_crucero_right_ign_ln" and self.contador >= 4):
+        if (self.state == "cruza_crucero_right_ign_ln" and self.contador >= 5):
             self.state = "cruza_crucero_right"
             self.contador =0.0
             return
         
-        if (self.state == "cruza_crucero_left_ign_ln" and self.contador < 4):
+        if (self.state == "cruza_crucero_left_ign_ln" and self.contador < 5):
             self.contador = self.contador + self.callback_time
             return
 
-        if (self.state == "cruza_crucero_left_ign_ln" and self.contador >= 4):
+        if (self.state == "cruza_crucero_left_ign_ln" and self.contador >= 5):
             self.state = "cruza_crucero_left"
             self.contador =0.0
             return
@@ -224,11 +222,11 @@ class SM(Node):
             self.warn_sign = "null"
             return
         
-        if (self.state == "seguir_ign_gw" and self.contador < 4):
+        if (self.state == "seguir_ign_gw" and self.contador < 6):
             self.contador = self.contador + self.callback_time
             return
         
-        if (self.state == "seguir_ign_gw" and self.contador >= 4):
+        if (self.state == "seguir_ign_gw" and self.contador >= 6):
             self.contador = 0.0
             self.state = "seguir_linea"
             return
@@ -245,7 +243,7 @@ class SM(Node):
             self.state = "ending"
             return
 
-        if (self.state == "ending" and self.contador < 4): #MOD
+        if (self.state == "ending" and self.contador < 2): #MOD
             self.contador = self.contador + self.interval
             return
 
@@ -253,13 +251,26 @@ class SM(Node):
             self.state = "ended"
             self.contador = 0.0
             return
-            
-            
         
-        
-        
-        
-        
+        #Retorno del stop  
+        if (self.state =="ended"):
+            #print("turn")
+            self.state = "turn_arround"
+            return
+
+        if (self.state == "turn_arround" and self.contador < 5):
+            #print("holi")
+            print(str(self.contador))
+            self.contador = self.contador + self.interval
+            return
+
+        if (self.state == "turn_arround" and self.contador >= 5):
+            self.state = "seguir_linea"
+            self.contador = 0.0
+            self.warn_sign = "null"
+            return
+
+                
         
         
 ##########################################################################################
