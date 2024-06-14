@@ -7,7 +7,7 @@ from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Float32, Int32, String
-
+#un comentario
 class LineDetect(Node):
    def __init__(self):
        super().__init__("image_processing")
